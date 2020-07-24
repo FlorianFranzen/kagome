@@ -77,7 +77,7 @@ namespace kagome::subscription {
       for (auto it_sub = subscribers_container.begin();
            it_sub != subscribers_container.end();) {
         if (auto sub = it_sub->lock()) {
-          sub->on_notify(args...);
+          sub->on_notify(key, args...);
           ++it_sub;
         } else {
           it_sub = subscribers_container.erase(it_sub);

@@ -37,7 +37,7 @@ namespace kagome::subscription {
     std::mutex subscriptions_cs_;
     SubscriptionsContainer subscriptions_;
 
-    std::function<void(Arguments const &...)> on_notify_callback_;
+    std::function<void(ValueType&, KeyType const &, Arguments const &...)> on_notify_callback_;
 
    public:
     template <typename... Args>
@@ -55,7 +55,7 @@ namespace kagome::subscription {
     Subscriber(Subscriber &&) = default;
     Subscriber &operator=(Subscriber &&) = default;
 
-    void set_callback(std::function<void(Arguments const &...)> &&f) {
+    void set_callback(std::function<void(ValueType&, KeyType const &, Arguments const &...)> &&f) {
       on_notify_callback_ = std::move(f);
     }
 
@@ -79,8 +79,8 @@ namespace kagome::subscription {
       }
     }
 
-    void on_notify(Arguments const &... args) {
-      if (nullptr != on_notify_callback_) on_notify_callback_(args...);
+    void on_notify(KeyType const &key, Arguments const &... args) {
+      if (nullptr != on_notify_callback_) on_notify_callback_(object_, key, args...);
     }
   };
 

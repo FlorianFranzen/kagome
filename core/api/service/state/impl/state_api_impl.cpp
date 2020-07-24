@@ -13,11 +13,13 @@ namespace kagome::api {
       std::shared_ptr<blockchain::BlockHeaderRepository> block_repo,
       std::shared_ptr<const storage::trie::TrieStorage> trie_storage,
       std::shared_ptr<blockchain::BlockTree> block_tree,
-      std::shared_ptr<runtime::Core> r_core)
+      std::shared_ptr<runtime::Core> r_core,
+      std::shared_ptr<api::ApiService> api_service)
       : block_repo_{std::move(block_repo)},
         storage_{std::move(trie_storage)},
         block_tree_{std::move(block_tree)},
-        r_core_{std::move(r_core)} {
+        r_core_{std::move(r_core)},
+        api_service_(api_service) {
     BOOST_ASSERT(nullptr != block_repo_);
     BOOST_ASSERT(nullptr != storage_);
     BOOST_ASSERT(nullptr != block_tree_);
@@ -40,5 +42,10 @@ namespace kagome::api {
   outcome::result<primitives::Version> StateApiImpl::getRuntimeVersion(
       const boost::optional<primitives::BlockHash> &at) const {
     return r_core_->version(at);
+  }
+
+  outcome::result<uint32_t> StateApiImpl::subscribeStorage(std::vector<common::Buffer> const &keys) {
+    BOOST_ASSERT(nullptr != api_service_);
+    return api_service_->subscribe_thread_session_to_keys(keys);
   }
 }  // namespace kagome::api

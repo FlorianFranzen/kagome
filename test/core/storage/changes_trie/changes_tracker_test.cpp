@@ -30,6 +30,9 @@ using kagome::storage::trie::PolkadotCodec;
 using kagome::storage::trie::PolkadotTrieFactoryImpl;
 using kagome::storage::trie::TrieSerializerImpl;
 using kagome::storage::trie::TrieStorageBackendImpl;
+using kagome::subscription::SubscriptionEngine;
+using kagome::primitives::BlockHash;
+using kagome::api::Session;
 namespace scale = kagome::scale;
 using testing::_;
 using testing::AnyOf;
@@ -41,6 +44,10 @@ using testing::Return;
  * @then changes are passed to the trie successfully
  */
 TEST(ChangesTrieTest, IntegrationWithOverlay) {
+  using SessionPtr = std::shared_ptr<Session>;
+  using SubscriptionEngineType = SubscriptionEngine<Buffer, SessionPtr, Buffer, BlockHash>;
+  using SubscriptionEnginePtr = std::shared_ptr<SubscriptionEngineType>;
+
   // GIVEN
   auto factory = std::make_shared<PolkadotTrieFactoryImpl>();
   auto codec = std::make_shared<PolkadotCodec>();
@@ -48,8 +55,9 @@ TEST(ChangesTrieTest, IntegrationWithOverlay) {
       std::make_shared<InMemoryStorage>(), Buffer{});
   auto serializer =
       std::make_shared<TrieSerializerImpl>(factory, codec, backend);
+  auto subscription_engine = std::make_shared<SubscriptionEngineType>();
   std::shared_ptr<ChangesTracker> changes_tracker =
-      std::make_shared<StorageChangesTrackerImpl>(factory, codec);
+      std::make_shared<StorageChangesTrackerImpl>(factory, codec, subscription_engine);
   EXPECT_OUTCOME_TRUE_1(changes_tracker->onBlockChange("aaa"_hash256, 42));
   auto batch = std::make_shared<PersistentTrieBatchImpl>(
       codec,

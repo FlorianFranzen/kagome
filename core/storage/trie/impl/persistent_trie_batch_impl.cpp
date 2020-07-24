@@ -23,7 +23,7 @@ namespace kagome::storage::trie {
       std::shared_ptr<TrieSerializer> serializer,
       boost::optional<std::shared_ptr<changes_trie::ChangesTracker>> changes,
       std::unique_ptr<PolkadotTrie> trie,
-      RootChangedEventHandler handler)
+      RootChangedEventHandler &&handler)
       : codec_{std::move(codec)},
         serializer_{std::move(serializer)},
         changes_{std::move(changes)},
@@ -87,9 +87,9 @@ namespace kagome::storage::trie {
   outcome::result<void> PersistentTrieBatchImpl::put(const Buffer &key,
                                                      Buffer &&value) {
     bool is_new_entry = not trie_->contains(key);
-    auto res = trie_->put(key, std::move(value));
+    auto res = trie_->put(key, value);
     if (res and changes_.has_value()) {
-      OUTCOME_TRY(changes_.value()->onPut(key, is_new_entry));
+      OUTCOME_TRY(changes_.value()->onPut(key, value, is_new_entry));
     }
     return res;
   }

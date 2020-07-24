@@ -16,6 +16,7 @@
 #include "outcome/outcome.hpp"
 #include "testutil/outcome.hpp"
 #include "testutil/literals.hpp"
+#include "subscription/subscriber.hpp"
 
 using kagome::common::Buffer;
 using kagome::storage::trie::PolkadotTrieFactoryImpl;
@@ -24,6 +25,9 @@ using kagome::storage::trie::TrieSerializerImpl;
 using kagome::storage::trie::TrieStorageBackendImpl;
 using kagome::storage::trie::TrieStorageImpl;
 using kagome::storage::LevelDB;
+using kagome::api::Session;
+using kagome::subscription::SubscriptionEngine;
+using kagome::primitives::BlockHash;
 
 static Buffer kNodePrefix = "\1"_buf;
 
@@ -34,6 +38,9 @@ static Buffer kNodePrefix = "\1"_buf;
  * @then the new instance contains the same data
  */
 TEST(TriePersistencyTest, CreateDestroyCreate) {
+  using SessionPtr = std::shared_ptr<Session>;
+  using SubscriptionEngineType = SubscriptionEngine<Buffer, SessionPtr, Buffer, BlockHash>;
+
   Buffer root;
   auto factory = std::make_shared<PolkadotTrieFactoryImpl>();
   auto codec = std::make_shared<PolkadotCodec>();
@@ -48,6 +55,7 @@ TEST(TriePersistencyTest, CreateDestroyCreate) {
         codec,
         std::make_shared<TrieStorageBackendImpl>(std::move(level_db),
                                                  kNodePrefix));
+
     auto storage =
         TrieStorageImpl::createEmpty(factory, codec, serializer, boost::none)
             .value();

@@ -26,6 +26,12 @@ using kagome::storage::face::WriteBatch;
 using testing::_;
 using testing::Invoke;
 using testing::Return;
+using kagome::api::Session;
+using kagome::subscription::SubscriptionEngine;
+using kagome::primitives::BlockHash;
+
+using SessionPtr = std::shared_ptr<Session>;
+using SubscriptionEngineType = SubscriptionEngine<Buffer, SessionPtr, Buffer, BlockHash>;
 
 class TrieBatchTest : public test::BaseLevelDB_Test {
  public:

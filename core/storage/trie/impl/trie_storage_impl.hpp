@@ -13,6 +13,11 @@
 #include "storage/trie/codec.hpp"
 #include "storage/trie/polkadot_trie/polkadot_trie_factory.hpp"
 #include "storage/trie/serialization/trie_serializer.hpp"
+#include "subscription/subscription_engine.hpp"
+
+namespace kagome::api {
+  class Session;
+}
 
 namespace kagome::storage::trie {
 

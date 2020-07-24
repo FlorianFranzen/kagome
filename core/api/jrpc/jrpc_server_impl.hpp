@@ -32,6 +32,13 @@ namespace kagome::api {
      */
     void processData(std::string_view request, const ResponseHandler &cb) override;
 
+    /**
+     * @brief creates valid jsonrpc response
+     * @param from is a data source
+     * @param cb callback
+     */
+    void processJsonData(jsonrpc::Value const &from, ResponseHandler const &cb) override;
+
    private:
     /// json rpc server instance
     jsonrpc::Server jsonrpc_handler_ {};
