@@ -18,7 +18,10 @@ namespace kagome::api {
   }
 
   void JRpcServerImpl::processJsonData(jsonrpc::Value const &from, ResponseHandler const &cb) {
-    using namespace jsonrpc;
+    using Response = jsonrpc::Response;
+    using Value = jsonrpc::Value;
+    using Fault = jsonrpc::Fault;
+
     auto writer = format_handler_.CreateWriter();
     try {
       Response response(jsonrpc::Value(from), Value(0));

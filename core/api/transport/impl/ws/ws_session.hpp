@@ -61,7 +61,7 @@ namespace kagome::api {
      * @brief method to get type of the session
      * @return type of the session
      */
-    virtual SessionType type() const { return SessionType::kSessionType_Ws; }
+    virtual SessionType type() const override { return SessionType::kSessionType_Ws; }
 
     /**
      * @brief sends response wrapped by websocket frame

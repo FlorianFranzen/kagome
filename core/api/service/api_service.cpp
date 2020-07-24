@@ -37,7 +37,7 @@ namespace kagome::api {
         listeners_(std::move(listeners)),
         server_(std::move(server)),
         logger_{common::createLogger("Api service")},
-        subscription_engine_(subscription_engine) {
+        subscription_engine_(std::move(subscription_engine)) {
     BOOST_ASSERT(thread_pool_);
     for ([[maybe_unused]] const auto &listener : listeners_) {
       BOOST_ASSERT(listener != nullptr);
@@ -87,7 +87,8 @@ namespace kagome::api {
                   };
 
                   threaded_info.store_thread_session_id(session->id());
-                  std::unique_ptr<void, decltype(thread_session_auto_release)> thread_session_keeper((void*)0xff, thread_session_auto_release);
+                  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+                  std::unique_ptr<void, decltype(thread_session_auto_release)> thread_session_keeper(reinterpret_cast<void*>(0xff), thread_session_auto_release);
 
                   // process new request
                   self->server_->processData(std::string(request), [session = std::move(session)](const std::string &response) mutable {
@@ -113,7 +114,7 @@ namespace kagome::api {
     return nullptr;
   }
 
-  ApiService::SubscribedSessionPtr ApiService::store_session_with_id(Session::SessionId id, std::shared_ptr<Session> session) {
+  ApiService::SubscribedSessionPtr ApiService::store_session_with_id(Session::SessionId id, std::shared_ptr<Session> const &session) {
     std::lock_guard guard(subscribed_sessions_cs_);
     auto &&[it, inserted] = subscribed_sessions_.emplace(id, std::make_shared<SubscribedSessionType>(subscription_engine_, session));
 

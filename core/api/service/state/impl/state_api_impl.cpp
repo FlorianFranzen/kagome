@@ -19,7 +19,7 @@ namespace kagome::api {
         storage_{std::move(trie_storage)},
         block_tree_{std::move(block_tree)},
         r_core_{std::move(r_core)},
-        api_service_(api_service) {
+        api_service_(std::move(api_service)) {
     BOOST_ASSERT(nullptr != block_repo_);
     BOOST_ASSERT(nullptr != storage_);
     BOOST_ASSERT(nullptr != block_tree_);

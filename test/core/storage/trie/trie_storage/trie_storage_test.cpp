@@ -38,9 +38,6 @@ static Buffer kNodePrefix = "\1"_buf;
  * @then the new instance contains the same data
  */
 TEST(TriePersistencyTest, CreateDestroyCreate) {
-  using SessionPtr = std::shared_ptr<Session>;
-  using SubscriptionEngineType = SubscriptionEngine<Buffer, SessionPtr, Buffer, BlockHash>;
-
   Buffer root;
   auto factory = std::make_shared<PolkadotTrieFactoryImpl>();
   auto codec = std::make_shared<PolkadotCodec>();
