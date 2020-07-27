@@ -27,7 +27,7 @@ namespace kagome::subscription {
     using SubscriberWPtr = std::weak_ptr<SubscriberType>;
 
     /// List preferable here because of remains the whole containers iterators
-    /// alive after remove from the middle
+    /// alive after remove from the middle of the container
     /// TODO(iceseer): remove processor cache penalty, while iterating, using
     /// custom allocator
     using SubscribersContainer = std::list<SubscriberWPtr>;

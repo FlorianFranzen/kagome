@@ -69,13 +69,13 @@ namespace kagome::api {
     void stop();
 
     outcome::result<uint32_t> subscribe_thread_session_to_keys(
-        std::vector<common::Buffer> const &keys);
+        const std::vector<common::Buffer> &keys);
 
    private:
     SubscribedSessionPtr find_session_by_id(Session::SessionId id);
     void remove_session_by_id(Session::SessionId id);
     SubscribedSessionPtr store_session_with_id(
-        Session::SessionId id, std::shared_ptr<Session> const &session);
+        const Session::SessionId id, std::shared_ptr<Session> &session);
 
    private:
     std::shared_ptr<api::RpcThreadPool> thread_pool_;

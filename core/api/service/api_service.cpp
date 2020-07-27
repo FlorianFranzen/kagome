@@ -134,7 +134,7 @@ namespace kagome::api {
   }
 
   ApiService::SubscribedSessionPtr ApiService::store_session_with_id(
-      Session::SessionId id, std::shared_ptr<Session> const &session) {
+      const Session::SessionId id, std::shared_ptr<Session> &session) {
     std::lock_guard guard(subscribed_sessions_cs_);
     auto &&[it, inserted] = subscribed_sessions_.emplace(
         id,
@@ -160,9 +160,8 @@ namespace kagome::api {
   }
 
   outcome::result<uint32_t> ApiService::subscribe_thread_session_to_keys(
-      std::vector<common::Buffer> const &keys) {
-    if (auto session_id = threaded_info.fetch_thread_session_id();
-        !!session_id) {
+      const std::vector<common::Buffer> &keys) {
+    if (auto session_id = threaded_info.fetch_thread_session_id(); session_id) {
       if (auto session = find_session_by_id(*session_id)) {
         for (auto &key : keys) {
           /// TODO(iceseer): make move data to subscription
