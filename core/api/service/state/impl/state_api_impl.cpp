@@ -45,7 +45,7 @@ namespace kagome::api {
   }
 
   outcome::result<uint32_t> StateApiImpl::subscribeStorage(
-      std::vector<common::Buffer> const &keys) {
+      const std::vector<common::Buffer> &keys) {
     BOOST_ASSERT(nullptr != api_service_);
     return api_service_->subscribe_thread_session_to_keys(keys);
   }

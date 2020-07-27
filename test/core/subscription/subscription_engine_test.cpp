@@ -51,7 +51,7 @@ TEST_F(SubscriptionEngineTest, SubscriberRegistration) {
                                                 SubscriptionTargetMock,
                                                 std::string_view,
                                                 int32_t>>(engine_);
-  subscriber->set_callback([&](auto &, auto const &key, std::string_view data_1, int32_t data_2) {
+  subscriber->set_callback([&](auto &, const auto &key, std::string_view data_1, int32_t data_2) {
     target.test_call(data_1, data_2);
   });
 

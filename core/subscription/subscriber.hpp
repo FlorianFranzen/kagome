@@ -37,7 +37,7 @@ namespace kagome::subscription {
     std::mutex subscriptions_cs_;
     SubscriptionsContainer subscriptions_;
 
-    std::function<void(ValueType&, KeyType const &, Arguments const &...)> on_notify_callback_;
+    std::function<void(ValueType&, const KeyType &, const Arguments &...)> on_notify_callback_;
 
    public:
     template <typename... Args>
@@ -49,17 +49,17 @@ namespace kagome::subscription {
       for (auto &[key, it] : subscriptions_) engine_->unsubscribe(key, it);
     }
 
-    Subscriber(Subscriber const &) = delete;
-    Subscriber &operator=(Subscriber const &) = delete;
+    Subscriber(const Subscriber &) = delete;
+    Subscriber &operator=(const Subscriber &) = delete;
 
     Subscriber(Subscriber &&) = default;
     Subscriber &operator=(Subscriber &&) = default;
 
-    void set_callback(std::function<void(ValueType&, KeyType const &, Arguments const &...)> &&f) {
+    void set_callback(std::function<void(ValueType&, const KeyType &, const Arguments &...)> &&f) {
       on_notify_callback_ = std::move(f);
     }
 
-    void subscribe(KeyType const &key) {
+    void subscribe(const KeyType &key) {
       std::lock_guard<std::mutex> lock(subscriptions_cs_);
       auto &&[it, inserted] = subscriptions_.emplace(
           std::make_pair(key, typename SubscriptionEngineType::IteratorType{}));
@@ -70,7 +70,7 @@ namespace kagome::subscription {
         it->second = engine_->subscribe(key, this->weak_from_this());
     }
 
-    void unsubscribe(KeyType const &key) {
+    void unsubscribe(const KeyType &key) {
       std::lock_guard<std::mutex> lock(subscriptions_cs_);
       auto it = subscriptions_.find(key);
       if (subscriptions_.end() != it) {
@@ -79,7 +79,7 @@ namespace kagome::subscription {
       }
     }
 
-    void on_notify(KeyType const &key, Arguments const &... args) {
+    void on_notify(const KeyType &key, const Arguments &... args) {
       if (nullptr != on_notify_callback_) on_notify_callback_(object_, key, args...);
     }
   };

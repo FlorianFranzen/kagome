@@ -25,7 +25,7 @@ namespace kagome::api {
     virtual outcome::result<primitives::Version> getRuntimeVersion(
         const boost::optional<primitives::BlockHash> &at) const = 0;
     virtual outcome::result<uint32_t> subscribeStorage(
-        std::vector<common::Buffer> const &keys) = 0;
+        const std::vector<common::Buffer> &keys) = 0;
   };
 
 }  // namespace kagome::api

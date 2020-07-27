@@ -41,7 +41,7 @@ namespace kagome::api {
      * @param from is a data source
      * @param cb callback
      */
-    virtual void processJsonData(jsonrpc::Value const &from,
+    virtual void processJsonData(const jsonrpc::Value &from,
                                  const ResponseHandler &cb) = 0;
 
     /**

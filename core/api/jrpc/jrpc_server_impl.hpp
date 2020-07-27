@@ -38,8 +38,8 @@ namespace kagome::api {
      * @param from is a data source
      * @param cb callback
      */
-    void processJsonData(jsonrpc::Value const &from,
-                         ResponseHandler const &cb) override;
+    void processJsonData(const jsonrpc::Value &from,
+                         const ResponseHandler &cb) override;
 
    private:
     /// json rpc server instance

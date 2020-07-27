@@ -19,8 +19,8 @@ namespace kagome::api::state::request {
 
   class SubscribeStorage final {
    public:
-    SubscribeStorage(SubscribeStorage const &) = delete;
-    SubscribeStorage &operator=(SubscribeStorage const &) = delete;
+    SubscribeStorage(const SubscribeStorage &) = delete;
+    SubscribeStorage &operator=(const SubscribeStorage &) = delete;
 
     SubscribeStorage(SubscribeStorage &&) = default;
     SubscribeStorage &operator=(SubscribeStorage &&) = default;

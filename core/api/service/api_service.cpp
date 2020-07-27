@@ -62,30 +62,32 @@ namespace kagome::api {
               return;
             }
 
-            auto subscribed_session =
-                self->store_session_with_id(session->id(), session);
-            subscribed_session->set_callback([wp](SessionPtr &session,
-                                                  auto const &key,
-                                                  auto const &data,
-                                                  auto const &block) {
-              if (auto self = wp.lock()) {
-                jsonrpc::Value::Array out_data;
-                out_data.emplace_back(api::makeValue(key));
-                out_data.emplace_back(api::makeValue(data));
+            if (SessionType::kSessionType_Ws == session->type()) {
+              auto subscribed_session =
+                  self->store_session_with_id(session->id(), session);
+              subscribed_session->set_callback([wp](SessionPtr &session,
+                                                    const auto &key,
+                                                    const auto &data,
+                                                    const auto &block) {
+                if (auto self = wp.lock()) {
+                  jsonrpc::Value::Array out_data;
+                  out_data.emplace_back(api::makeValue(key));
+                  out_data.emplace_back(api::makeValue(data));
 
-                /// TODO(iceseer): make event notofication depending in blocks,
-                /// to butch them in a single message
+                  /// TODO(iceseer): make event notofication depending in
+                  /// blocks, to butch them in a single message
 
-                jsonrpc::Value::Struct result;
-                result["changes"] = std::move(out_data);
-                result["block"] = api::makeValue(block);
+                  jsonrpc::Value::Struct result;
+                  result["changes"] = std::move(out_data);
+                  result["block"] = api::makeValue(block);
 
-                self->server_->processJsonData(
-                    result, [&](const std::string &response) {
-                      session->respond(response);
-                    });
-              }
-            });
+                  self->server_->processJsonData(
+                      result, [&](const std::string &response) {
+                        session->respond(response);
+                      });
+                }
+              });
+            }
 
             session->connectOnRequest(
                 [wp](std::string_view request,

@@ -48,17 +48,17 @@ namespace kagome::subscription {
     SubscriptionEngine(SubscriptionEngine &&) = default;
     SubscriptionEngine &operator=(SubscriptionEngine &&) = default;
 
-    SubscriptionEngine(SubscriptionEngine const &) = delete;
-    SubscriptionEngine &operator=(SubscriptionEngine const &) = delete;
+    SubscriptionEngine(const SubscriptionEngine &) = delete;
+    SubscriptionEngine &operator=(const SubscriptionEngine &) = delete;
 
    private:
-    IteratorType subscribe(KeyType const &key, SubscriberWPtr ptr) {
+    IteratorType subscribe(const KeyType &key, SubscriberWPtr ptr) {
       std::unique_lock lock(subscribers_map_cs_);
       auto &subscribers_list = subscribers_map_[key];
       return subscribers_list.emplace(subscribers_list.end(), std::move(ptr));
     }
 
-    void unsubscribe(KeyType const &key, IteratorType const &it_remove) {
+    void unsubscribe(const KeyType &key, const IteratorType &it_remove) {
       std::unique_lock lock(subscribers_map_cs_);
       auto it = subscribers_map_.find(key);
       if (subscribers_map_.end() != it) {
@@ -68,7 +68,7 @@ namespace kagome::subscription {
     }
 
    public:
-    void notify(KeyType const &key, Arguments const &... args) {
+    void notify(const KeyType &key, const Arguments &... args) {
       std::shared_lock lock(subscribers_map_cs_);
       auto it = subscribers_map_.find(key);
       if (subscribers_map_.end() == it) return;
