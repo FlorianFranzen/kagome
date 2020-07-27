@@ -25,7 +25,8 @@ namespace kagome::api::state::request {
     SubscribeStorage(SubscribeStorage &&) = default;
     SubscribeStorage &operator=(SubscribeStorage &&) = default;
 
-    explicit SubscribeStorage(std::shared_ptr<StateApi> api) : api_(std::move(api)){};
+    explicit SubscribeStorage(std::shared_ptr<StateApi> api)
+        : api_(std::move(api)){};
     ~SubscribeStorage() = default;
 
     outcome::result<void> init(const jsonrpc::Request::Parameters &params);
@@ -36,6 +37,6 @@ namespace kagome::api::state::request {
     std::vector<common::Buffer> key_buffers_;
   };
 
-}
+}  // namespace kagome::api::state::request
 
-#endif //KAGOME_API_REQUEST_SUBSCRIBE_STORAGE
+#endif  // KAGOME_API_REQUEST_SUBSCRIBE_STORAGE

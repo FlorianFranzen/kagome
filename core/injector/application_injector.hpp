@@ -68,8 +68,8 @@
 #include "network/sync_protocol_client.hpp"
 #include "network/sync_protocol_observer.hpp"
 #include "network/types/sync_clients_set.hpp"
-#include "runtime/binaryen/module/wasm_module_impl.hpp"
 #include "runtime/binaryen/module/wasm_module_factory_impl.hpp"
+#include "runtime/binaryen/module/wasm_module_impl.hpp"
 #include "runtime/binaryen/runtime_api/babe_api_impl.hpp"
 #include "runtime/binaryen/runtime_api/block_builder_impl.hpp"
 #include "runtime/binaryen/runtime_api/core_impl.hpp"
@@ -135,8 +135,13 @@ namespace kagome::injector {
     if (initialized) {
       return initialized.value();
     }
-    using SubscriptionEnginePtr = std::shared_ptr<subscription::SubscriptionEngine<common::Buffer, std::shared_ptr<api::Session>, common::Buffer, primitives::BlockHash>>;
-    auto subscription_engine = injector.template create<SubscriptionEnginePtr>();
+    using SubscriptionEnginePtr = std::shared_ptr<
+        subscription::SubscriptionEngine<common::Buffer,
+                                         std::shared_ptr<api::Session>,
+                                         common::Buffer,
+                                         primitives::BlockHash>>;
+    auto subscription_engine =
+        injector.template create<SubscriptionEnginePtr>();
     auto app_state_manager =
         injector
             .template create<std::shared_ptr<application::AppStateManager>>();

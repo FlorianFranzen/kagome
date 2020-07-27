@@ -6,9 +6,9 @@
 #ifndef KAGOME_STATE_API_IMPL_HPP
 #define KAGOME_STATE_API_IMPL_HPP
 
+#include "api/service/api_service.hpp"
 #include "api/service/state/readonly_trie_builder.hpp"
 #include "api/service/state/state_api.hpp"
-#include "api/service/api_service.hpp"
 #include "blockchain/block_header_repository.hpp"
 #include "blockchain/block_tree.hpp"
 #include "runtime/core.hpp"
@@ -31,7 +31,8 @@ namespace kagome::api {
         const primitives::BlockHash &at) const override;
     outcome::result<primitives::Version> getRuntimeVersion(
         const boost::optional<primitives::BlockHash> &at) const override;
-    outcome::result<uint32_t> subscribeStorage(std::vector<common::Buffer> const &keys) override;
+    outcome::result<uint32_t> subscribeStorage(
+        std::vector<common::Buffer> const &keys) override;
 
    private:
     std::shared_ptr<blockchain::BlockHeaderRepository> block_repo_;

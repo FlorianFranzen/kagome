@@ -17,7 +17,8 @@ namespace kagome::api {
     dispatcher.AddMethod(name, std::move(method));
   }
 
-  void JRpcServerImpl::processJsonData(jsonrpc::Value const &from, ResponseHandler const &cb) {
+  void JRpcServerImpl::processJsonData(jsonrpc::Value const &from,
+                                       ResponseHandler const &cb) {
     using Response = jsonrpc::Response;
     using Value = jsonrpc::Value;
     using Fault = jsonrpc::Fault;
@@ -26,7 +27,7 @@ namespace kagome::api {
     try {
       Response response(jsonrpc::Value(from), Value(0));
       response.Write(*writer);
-    } catch (const Fault& ex) {
+    } catch (const Fault &ex) {
       Response(ex.GetCode(), ex.GetString(), Value()).Write(*writer);
     }
     auto &&formatted_response = writer->GetData();
@@ -35,7 +36,7 @@ namespace kagome::api {
   }
 
   void JRpcServerImpl::processData(std::string_view request,
-                               const ResponseHandler &cb) {
+                                   const ResponseHandler &cb) {
     auto &&formatted_response =
         jsonrpc_handler_.HandleRequest(std::string(request));
     std::string response(formatted_response->GetData(),

@@ -18,7 +18,7 @@ namespace kagome::api {
         socket_(strand_),
         config_{config},
         stream_(socket_),
-  id_(id) {}
+        id_(id) {}
 
   void WsSession::start() {
     boost::asio::dispatch(stream_.get_executor(),

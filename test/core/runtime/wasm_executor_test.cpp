@@ -34,7 +34,6 @@
 #include "testutil/runtime/common/basic_wasm_provider.hpp"
 
 using kagome::api::Session;
-using kagome::subscription::SubscriptionEngine;
 using kagome::common::Buffer;
 using kagome::crypto::Bip39ProviderImpl;
 using kagome::crypto::BoostRandomGenerator;
@@ -44,6 +43,7 @@ using kagome::crypto::HasherImpl;
 using kagome::crypto::Pbkdf2ProviderImpl;
 using kagome::crypto::Secp256k1ProviderImpl;
 using kagome::crypto::SR25519ProviderImpl;
+using kagome::primitives::BlockHash;
 using kagome::runtime::TrieStorageProvider;
 using kagome::runtime::TrieStorageProviderImpl;
 using kagome::runtime::binaryen::RuntimeManager;
@@ -55,7 +55,7 @@ using kagome::storage::trie::PolkadotTrieImpl;
 using kagome::storage::trie::TrieSerializerImpl;
 using kagome::storage::trie::TrieStorage;
 using kagome::storage::trie::TrieStorageImpl;
-using kagome::primitives::BlockHash;
+using kagome::subscription::SubscriptionEngine;
 
 namespace fs = boost::filesystem;
 
@@ -79,7 +79,8 @@ class WasmExecutorTest : public ::testing::Test {
         std::make_shared<TrieSerializerImpl>(trie_factory, codec, backend);
 
     using SessionPtr = std::shared_ptr<Session>;
-    using SubscriptionEngineType = SubscriptionEngine<Buffer, SessionPtr, Buffer, BlockHash>;
+    using SubscriptionEngineType =
+        SubscriptionEngine<Buffer, SessionPtr, Buffer, BlockHash>;
     auto trieDb = kagome::storage::trie::TrieStorageImpl::createEmpty(
                       trie_factory, codec, serializer, boost::none)
                       .value();

@@ -12,7 +12,7 @@
 
 namespace kagome::api {
 
-  class JRpcServerImpl: public JRpcServer {
+  class JRpcServerImpl : public JRpcServer {
    public:
     JRpcServerImpl();
 
@@ -30,18 +30,20 @@ namespace kagome::api {
      * @param request json request string
      * @param cb callback
      */
-    void processData(std::string_view request, const ResponseHandler &cb) override;
+    void processData(std::string_view request,
+                     const ResponseHandler &cb) override;
 
     /**
      * @brief creates valid jsonrpc response
      * @param from is a data source
      * @param cb callback
      */
-    void processJsonData(jsonrpc::Value const &from, ResponseHandler const &cb) override;
+    void processJsonData(jsonrpc::Value const &from,
+                         ResponseHandler const &cb) override;
 
    private:
     /// json rpc server instance
-    jsonrpc::Server jsonrpc_handler_ {};
+    jsonrpc::Server jsonrpc_handler_{};
     /// format handler instance
     jsonrpc::JsonFormatHandler format_handler_{};
   };

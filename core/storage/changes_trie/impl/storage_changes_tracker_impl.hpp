@@ -14,12 +14,15 @@ namespace kagome::api {
   class Session;
 }
 
-
 namespace kagome::storage::changes_trie {
 
   class StorageChangesTrackerImpl : public ChangesTracker {
     using SessionPtr = std::shared_ptr<api::Session>;
-    using SubscriptionEngineType = subscription::SubscriptionEngine<common::Buffer, SessionPtr, common::Buffer, primitives::BlockHash>;
+    using SubscriptionEngineType =
+        subscription::SubscriptionEngine<common::Buffer,
+                                         SessionPtr,
+                                         common::Buffer,
+                                         primitives::BlockHash>;
     using SubscriptionEnginePtr = std::shared_ptr<SubscriptionEngineType>;
 
    public:
@@ -45,7 +48,8 @@ namespace kagome::storage::changes_trie {
         primitives::BlockHash new_parent_hash,
         primitives::BlockNumber new_parent_number) override;
 
-    outcome::result<void> onPut(const common::Buffer &key, const common::Buffer &value,
+    outcome::result<void> onPut(const common::Buffer &key,
+                                const common::Buffer &value,
                                 bool new_entry) override;
     outcome::result<void> onRemove(const common::Buffer &key) override;
 
@@ -59,8 +63,8 @@ namespace kagome::storage::changes_trie {
 
     std::map<common::Buffer, std::vector<primitives::ExtrinsicIndex>>
         extrinsics_changes_;
-    std::set<common::Buffer>
-        new_entries_; // entries that do not yet exist in the underlying storage
+    std::set<common::Buffer> new_entries_;  // entries that do not yet exist in
+                                            // the underlying storage
     primitives::BlockHash parent_hash_;
     primitives::BlockNumber parent_number_;
     GetExtrinsicIndexDelegate get_extrinsic_index_;

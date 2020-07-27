@@ -73,13 +73,17 @@ namespace kagome::api {
      * @brief method to get id of the session
      * @return id of the session
      */
-    SessionId id() const override { return 0ull; }
+    SessionId id() const override {
+      return 0ull;
+    }
 
     /**
      * @brief method to get type of the session
      * @return type of the session
      */
-    virtual SessionType type() const override { return SessionType::kSessionType_Http; }
+    virtual SessionType type() const override {
+      return SessionType::kSessionType_Http;
+    }
 
    private:
     /**

@@ -66,7 +66,8 @@ namespace kagome::api {
   }
 
   void WsListenerImpl::acceptOnce() {
-    new_session_ = std::make_shared<SessionImpl>(*context_, session_config_, next_session_id_.fetch_add(1ull));
+    new_session_ = std::make_shared<SessionImpl>(
+        *context_, session_config_, next_session_id_.fetch_add(1ull));
     auto on_accept = [wp = weak_from_this()](boost::system::error_code ec) {
       if (auto self = wp.lock()) {
         if (not ec) {

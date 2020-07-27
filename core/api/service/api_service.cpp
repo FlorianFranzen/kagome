@@ -10,7 +10,9 @@
 
 namespace {
   thread_local class {
-    boost::optional<kagome::api::Session::SessionId> binded_session_id_ = boost::none;
+    boost::optional<kagome::api::Session::SessionId> binded_session_id_ =
+        boost::none;
+
    public:
     void store_thread_session_id(kagome::api::Session::SessionId id) {
       binded_session_id_ = id;
@@ -22,7 +24,7 @@ namespace {
       return binded_session_id_;
     }
   } threaded_info;
-}
+}  // namespace
 
 namespace kagome::api {
 
@@ -53,51 +55,66 @@ namespace kagome::api {
 
   void ApiService::prepare() {
     for (const auto &listener : listeners_) {
-      auto on_new_session = [wp = weak_from_this()](const sptr<Session> &session) mutable {
+      auto on_new_session =
+          [wp = weak_from_this()](const sptr<Session> &session) mutable {
             auto self = wp.lock();
             if (!self) {
               return;
             }
 
-            auto subscribed_session = self->store_session_with_id(session->id(), session);
-            subscribed_session->set_callback([wp](SessionPtr &session, auto const &key, auto const &data, auto const &block) {
+            auto subscribed_session =
+                self->store_session_with_id(session->id(), session);
+            subscribed_session->set_callback([wp](SessionPtr &session,
+                                                  auto const &key,
+                                                  auto const &data,
+                                                  auto const &block) {
               if (auto self = wp.lock()) {
                 jsonrpc::Value::Array out_data;
                 out_data.emplace_back(api::makeValue(key));
                 out_data.emplace_back(api::makeValue(data));
 
-                /// TODO(iceseer): make event notofication depending in blocks, to butch them in a single message
+                /// TODO(iceseer): make event notofication depending in blocks,
+                /// to butch them in a single message
 
                 jsonrpc::Value::Struct result;
                 result["changes"] = std::move(out_data);
                 result["block"] = api::makeValue(block);
 
-                self->server_->processJsonData(result, [&](const std::string &response) {
-                  session->respond(response);
-                });
+                self->server_->processJsonData(
+                    result, [&](const std::string &response) {
+                      session->respond(response);
+                    });
               }
             });
 
-            session->connectOnRequest([wp](std::string_view request,std::shared_ptr<Session> session) mutable {
+            session->connectOnRequest(
+                [wp](std::string_view request,
+                     std::shared_ptr<Session> session) mutable {
                   auto self = wp.lock();
                   if (not self) return;
 
-                  auto thread_session_auto_release = [](void*) {
+                  auto thread_session_auto_release = [](void *) {
                     threaded_info.release_thread_session_id();
                   };
 
                   threaded_info.store_thread_session_id(session->id());
                   // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-                  std::unique_ptr<void, decltype(thread_session_auto_release)> thread_session_keeper(reinterpret_cast<void*>(0xff), thread_session_auto_release);
+                  std::unique_ptr<void, decltype(thread_session_auto_release)>
+                  thread_session_keeper(reinterpret_cast<void *>(0xff),
+                                        thread_session_auto_release);
 
                   // process new request
-                  self->server_->processData(std::string(request), [session = std::move(session)](const std::string &response) mutable {
+                  self->server_->processData(
+                      std::string(request),
+                      [session = std::move(session)](
+                          const std::string &response) mutable {
                         // process response
                         session->respond(response);
                       });
                 });
 
-            session->connectOnCloseHandler([wp](Session::SessionId id, SessionType /*type*/) {
+            session->connectOnCloseHandler(
+                [wp](Session::SessionId id, SessionType /*type*/) {
                   if (auto self = wp.lock()) self->remove_session_by_id(id);
                 });
           };
@@ -106,17 +123,22 @@ namespace kagome::api {
     }
   }
 
-  ApiService::SubscribedSessionPtr ApiService::find_session_by_id(Session::SessionId id) {
+  ApiService::SubscribedSessionPtr ApiService::find_session_by_id(
+      Session::SessionId id) {
     std::lock_guard guard(subscribed_sessions_cs_);
-    if (auto it = subscribed_sessions_.find(id); subscribed_sessions_.end() != it)
+    if (auto it = subscribed_sessions_.find(id);
+        subscribed_sessions_.end() != it)
       return it->second;
 
     return nullptr;
   }
 
-  ApiService::SubscribedSessionPtr ApiService::store_session_with_id(Session::SessionId id, std::shared_ptr<Session> const &session) {
+  ApiService::SubscribedSessionPtr ApiService::store_session_with_id(
+      Session::SessionId id, std::shared_ptr<Session> const &session) {
     std::lock_guard guard(subscribed_sessions_cs_);
-    auto &&[it, inserted] = subscribed_sessions_.emplace(id, std::make_shared<SubscribedSessionType>(subscription_engine_, session));
+    auto &&[it, inserted] = subscribed_sessions_.emplace(
+        id,
+        std::make_shared<SubscribedSessionType>(subscription_engine_, session));
 
     BOOST_ASSERT(inserted);
     return std::move(it->second);
@@ -137,8 +159,10 @@ namespace kagome::api {
     logger_->debug("Service stopped");
   }
 
-  outcome::result<uint32_t> ApiService::subscribe_thread_session_to_keys(std::vector<common::Buffer> const &keys) {
-    if (auto session_id = threaded_info.fetch_thread_session_id(); !!session_id) {
+  outcome::result<uint32_t> ApiService::subscribe_thread_session_to_keys(
+      std::vector<common::Buffer> const &keys) {
+    if (auto session_id = threaded_info.fetch_thread_session_id();
+        !!session_id) {
       if (auto session = find_session_by_id(*session_id)) {
         for (auto &key : keys) {
           /// TODO(iceseer): make move data to subscription

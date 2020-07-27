@@ -14,13 +14,13 @@
 #include "api/jrpc/jrpc_server.hpp"
 #include "api/service/api_service.hpp"
 #include "application/impl/app_state_manager_impl.hpp"
+#include "common/buffer.hpp"
 #include "core/api/client/http_client.hpp"
 #include "mock/core/api/transport/api_stub.hpp"
 #include "mock/core/api/transport/jrpc_processor_stub.hpp"
 #include "mock/core/application/app_state_manager_mock.hpp"
-#include "transaction_pool/transaction_pool_error.hpp"
 #include "subscription/subscriber.hpp"
-#include "common/buffer.hpp"
+#include "transaction_pool/transaction_pool_error.hpp"
 
 using namespace kagome::api;
 using namespace kagome::common;
@@ -91,8 +91,10 @@ struct ListenerTest : public ::testing::Test {
       app_state_manager, main_context, listener_config, session_config);
 
   using SessionPtr = std::shared_ptr<Session>;
-  using SubscriptionEngineType = SubscriptionEngine<Buffer, SessionPtr, Buffer, BlockHash>;
-  std::shared_ptr<SubscriptionEngineType> subscription_engine = std::make_shared<SubscriptionEngineType>();
+  using SubscriptionEngineType =
+      SubscriptionEngine<Buffer, SessionPtr, Buffer, BlockHash>;
+  std::shared_ptr<SubscriptionEngineType> subscription_engine =
+      std::make_shared<SubscriptionEngineType>();
 
   sptr<ApiService> service = std::make_shared<ApiService>(
       app_state_manager,

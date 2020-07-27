@@ -52,8 +52,8 @@ class StateJrpcProcessorTest : public testing::Test {
         }));
     EXPECT_CALL(*server, registerHandler("state_subscribeStorage", _))
         .WillOnce(testing::Invoke([&](auto &name, auto &&f) {
-          call_contexts_.emplace(std::make_pair(CallType::kCallType_StorageSubscribe,
-                                                CallContext{.handler = f}));
+          call_contexts_.emplace(std::make_pair(
+              CallType::kCallType_StorageSubscribe, CallContext{.handler = f}));
         }));
     processor.registerHandlers();
   }

@@ -8,15 +8,15 @@
 
 #include <functional>
 #include <gsl/span>
-#include <unordered_map>
 #include <mutex>
+#include <unordered_map>
 
 #include "api/jrpc/jrpc_server_impl.hpp"
 #include "api/transport/listener.hpp"
 #include "api/transport/rpc_thread_pool.hpp"
 #include "application/app_state_manager.hpp"
-#include "common/logger.hpp"
 #include "common/buffer.hpp"
+#include "common/logger.hpp"
 #include "primitives/common.hpp"
 #include "subscription/subscriber.hpp"
 
@@ -30,10 +30,18 @@ namespace kagome::api {
   class ApiService final : public std::enable_shared_from_this<ApiService> {
     using SessionPtr = std::shared_ptr<Session>;
 
-    using SubscribedSessionType = subscription::Subscriber<common::Buffer, SessionPtr, common::Buffer, primitives::BlockHash>;
+    using SubscribedSessionType =
+        subscription::Subscriber<common::Buffer,
+                                 SessionPtr,
+                                 common::Buffer,
+                                 primitives::BlockHash>;
     using SubscribedSessionPtr = std::shared_ptr<SubscribedSessionType>;
 
-    using SubscriptionEngineType = subscription::SubscriptionEngine<common::Buffer, SessionPtr, common::Buffer, primitives::BlockHash>;
+    using SubscriptionEngineType =
+        subscription::SubscriptionEngine<common::Buffer,
+                                         SessionPtr,
+                                         common::Buffer,
+                                         primitives::BlockHash>;
     using SubscriptionEnginePtr = std::shared_ptr<SubscriptionEngineType>;
 
    public:
@@ -60,12 +68,14 @@ namespace kagome::api {
     void start();
     void stop();
 
-    outcome::result<uint32_t> subscribe_thread_session_to_keys(std::vector<common::Buffer> const &keys);
+    outcome::result<uint32_t> subscribe_thread_session_to_keys(
+        std::vector<common::Buffer> const &keys);
 
    private:
     SubscribedSessionPtr find_session_by_id(Session::SessionId id);
     void remove_session_by_id(Session::SessionId id);
-    SubscribedSessionPtr store_session_with_id(Session::SessionId id, std::shared_ptr<Session> const &session);
+    SubscribedSessionPtr store_session_with_id(
+        Session::SessionId id, std::shared_ptr<Session> const &session);
 
    private:
     std::shared_ptr<api::RpcThreadPool> thread_pool_;
@@ -74,7 +84,8 @@ namespace kagome::api {
     common::Logger logger_;
 
     std::mutex subscribed_sessions_cs_;
-    std::unordered_map<Session::SessionId, SubscribedSessionPtr> subscribed_sessions_;
+    std::unordered_map<Session::SessionId, SubscribedSessionPtr>
+        subscribed_sessions_;
     SubscriptionEnginePtr subscription_engine_;
   };
 }  // namespace kagome::api
