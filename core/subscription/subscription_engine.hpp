@@ -38,7 +38,7 @@ namespace kagome::subscription {
     friend class Subscriber;
     using KeyValueContainer = std::unordered_map<KeyType, SubscribersContainer>;
 
-    std::shared_mutex subscribers_map_cs_;
+    std::shared_mutex mutable subscribers_map_cs_;
     KeyValueContainer subscribers_map_;
 
    public:
@@ -68,6 +68,14 @@ namespace kagome::subscription {
     }
 
    public:
+    size_t size(const KeyType &key) const {
+      std::shared_lock lock(subscribers_map_cs_);
+      if (auto it = subscribers_map_.find(key); it != subscribers_map_.end())
+        return it->second.size();
+
+      return 0ull;
+    }
+
     void notify(const KeyType &key, const Arguments &... args) {
       std::shared_lock lock(subscribers_map_cs_);
       auto it = subscribers_map_.find(key);

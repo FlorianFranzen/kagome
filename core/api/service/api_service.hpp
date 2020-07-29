@@ -75,7 +75,7 @@ namespace kagome::api {
     SubscribedSessionPtr find_session_by_id(Session::SessionId id);
     void remove_session_by_id(Session::SessionId id);
     SubscribedSessionPtr store_session_with_id(
-        const Session::SessionId id, std::shared_ptr<Session> &session);
+        const Session::SessionId id, const std::shared_ptr<Session> &session);
 
    private:
     std::shared_ptr<api::RpcThreadPool> thread_pool_;

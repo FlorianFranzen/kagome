@@ -136,7 +136,7 @@ namespace kagome::api {
   }
 
   ApiService::SubscribedSessionPtr ApiService::store_session_with_id(
-      const Session::SessionId id, std::shared_ptr<Session> &session) {
+      const Session::SessionId id, const std::shared_ptr<Session> &session) {
     std::lock_guard guard(subscribed_sessions_cs_);
     auto &&[it, inserted] = subscribed_sessions_.emplace(
         id,
