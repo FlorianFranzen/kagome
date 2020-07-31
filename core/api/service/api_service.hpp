@@ -71,6 +71,9 @@ namespace kagome::api {
     outcome::result<uint32_t> subscribe_thread_session_to_keys(
         const std::vector<common::Buffer> &keys);
 
+    outcome::result<uint32_t> unsubscribe_thread_session_from_ids(
+        uint32_t subscription_id);
+
    private:
     SubscribedSessionPtr find_session_by_id(Session::SessionId id);
     void remove_session_by_id(Session::SessionId id);
