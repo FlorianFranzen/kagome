@@ -110,18 +110,30 @@ add_subdirectory(core)
 
 kagome_install_setup(
     HEADER_DIRS
-    core/common
-    core/log
+    #core/api
+    #core/application
+    #core/assets
+    core/authorship
     core/blockchain
-    core/primitives
+    core/clock
+    core/common
+    core/consensus
+    #core/containers
+    core/crypto
+    #core/filesystem
+    core/host_api
+    #core/injector
+    core/log
     core/macro
+    core/metrics
+    #core/network
+    core/outcome
+    core/primitives
+    core/runtime
     core/scale
     core/storage
-    core/crypto
-    core/outcome
-    core/runtime
-    core/host_api
     core/subscription
+    #core/transaction_pool
 )
 
 include(CMakePackageConfigHelpers)
